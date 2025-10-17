@@ -17,7 +17,7 @@ export default function Home() {
     const formData = new FormData();
     formData.append("file", image);
 
-    const res = await fetch("http://127.0.0.1:8000/predict/", {
+    const res = await fetch("https://yolo-backend-dmn3.onrender.com/predict/", {
       method: "POST",
       body: formData,
     });
@@ -37,7 +37,7 @@ export default function Home() {
 
       {result && (
         <>
-          <img src={`http://127.0.0.1:8000${result.image_url}`} alt="Detected" />
+          <img src={`https://yolo-backend-dmn3.onrender.com${result.image_url}`} alt="Detected" />
           <ul>
             {result?.detections?.map((d, i) => (
               <li key={i}>{d.label} ({(d.confidence * 100).toFixed(1)}%)</li>
