@@ -37,7 +37,7 @@ export default function Home() {
 
       {result && (
         <>
-          <img src={`https://yolo-backend-dmn3.onrender.com${result.image_url}`} alt="Detected" />
+          <img src={`data:image/jpeg;base64,${result.image_base64}`} alt="Detected" />
           <ul>
             {result?.detections?.map((d, i) => (
               <li key={i}>{d.label} ({(d.confidence * 100).toFixed(1)}%)</li>
