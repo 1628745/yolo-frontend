@@ -26,7 +26,7 @@ export default function Home() {
   };
 
   // ZIP file upload
-  const handleZipSelect = async () => {
+  /*const handleZipSelect = async () => {
   if (!zipFile) return;
   setLoading(true);
 
@@ -34,14 +34,23 @@ export default function Home() {
   const zip = await JSZip.loadAsync(zipFile);
   let totalDetections = {};
 
-  const files = Object.values(zip.files).filter(f => !f.dir && /\.(png|jpe?g)$/i.test(f.name));
+  // Get all image files from ZIP
+  const files = Object.values(zip.files).filter(
+    (f) => !f.dir && /\.(png|jpe?g)$/i.test(f.name)
+  );
 
   for (let f of files) {
-    const fileData = await f.async("blob");
-    const formData = new FormData();
-    formData.append("file", fileData, f.name);
-
     try {
+      // Extract blob from ZIP
+      const blob = await f.async("blob");
+
+      // Wrap blob in a File to mimic normal single-image upload
+      const fileObj = new File([blob], f.name, { type: blob.type || "image/jpeg" });
+
+      // Send to backend
+      const formData = new FormData();
+      formData.append("file", fileObj);
+
       const res = await fetch("https://yolo-backend-dmn3.onrender.com/predict/", {
         method: "POST",
         body: formData,
@@ -51,26 +60,28 @@ export default function Home() {
       const data = await res.json();
 
       // Aggregate detections
-      data.detections.forEach(d => {
+      data.detections.forEach((d) => {
         totalDetections[d.label] = (totalDetections[d.label] || 0) + 1;
       });
 
-      // Add a short delay between uploads (Render safe)
-      await new Promise(r => setTimeout(r, 2000));
+      // Short delay between uploads to be safe
+      await new Promise((r) => setTimeout(r, 500));
     } catch (err) {
       console.error(`Error on ${f.name}:`, err);
     }
   }
 
+  // Convert aggregate tally to array for display
   const detectionArray = Object.entries(totalDetections).map(([label, count]) => ({
     label,
-    confidence: count,
-    bbox: [],
+    confidence: count, // count for ZIP mode
+    bbox: [], // no bbox for aggregate
   }));
 
   setResult({ image_base64: null, detections: detectionArray, zipMode: true });
   setLoading(false);
-};
+};*/
+
 
 
   return (
@@ -82,8 +93,11 @@ export default function Home() {
 
       {/* Carousels */}
       <div className="my-8 flex justify-center">
-        <Carousel slides={["/img1.jpg","/img2.jpg"]} className="w-3/4" />
+        <Carousel slides={["/img1.jpg","/img2.jpg", "/img3.jpg", "img4.jpg", "img5.jpg"]} className="w-3/4" />
       </div>
+        <div className="my-8 flex justify-center">
+            <Carousel slides={["/imgA.jpg","/imgB.jpg"]} className="w-3/4" />
+        </div>
 
       {/* Upload Section */}
       <div className="flex justify-center items-start space-x-8 my-8">
@@ -113,19 +127,10 @@ export default function Home() {
             Select Photo
           </label>
 
-          <input
-            type="file"
-            accept=".zip"
-            onChange={(e) => { setZipFile(e.target.files[0]); setSelectedImage(null); }}
-            className="hidden"
-            id="zipInput"
-          />
-          <label htmlFor="zipInput" className="w-48 py-4 bg-purple-500 text-white font-semibold rounded-xl text-center cursor-pointer hover:bg-purple-600">
-            Select ZIP File
-          </label>
+
 
           <button
-            onClick={selectedImage ? handleTestPhoto : handleZipSelect}
+            onClick={handleTestPhoto}
             className="w-48 py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-all"
           >
             {loading ? "Processing..." : "Test Selected Photo"}
@@ -146,13 +151,15 @@ export default function Home() {
           </div>
 
           {/* Right: Text Details */}
-          <div className="w-1/2 h-160 border-4 border-gray-300 rounded-xl p-4 bg-gray-50 overflow-auto">
-            {result.detections.map((d, i) => (
-              <p key={i} className="text-gray-800">
-                {d.label} {result.zipMode ? `- ${d.confidence} detected` : `(${(d.confidence * 100).toFixed(1)}%) - [${d.bbox.map(v => v.toFixed(0)).join(", ")}]`}
-              </p>
-            ))}
-          </div>
+<div className="w-1/2 h-160 border-4 border-gray-300 rounded-xl p-4 bg-gray-50 overflow-auto">
+  {result.detections.map((d, i) => (
+    <div key={i} className="text-gray-800 mb-2">
+      <p><span className="font-semibold">identified animal:</span> {d.label}</p>
+      <p><span className="font-semibold">confidence:</span> {(d.confidence * 100).toFixed(1)}%</p>
+    </div>
+  ))}
+</div>
+
         </div>
       )}
     </main>
