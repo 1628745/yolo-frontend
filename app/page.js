@@ -35,7 +35,7 @@ export default function Home() {
       {/* Upload Section */}
       <div className="flex justify-center items-start space-x-8 my-8">
         {/* Left: Uploaded Image */}
-        <div className="w-1/2 h-64 border-4 border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
+        <div className="w-1/2 h-128 border-4 border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
           {selectedImage ? (
             <img src={URL.createObjectURL(selectedImage)} alt="Selected" className="max-h-full max-w-full rounded-lg" />
           ) : (
@@ -44,7 +44,7 @@ export default function Home() {
         </div>
 
         {/* Right: Buttons */}
-        <div className="w-1/2 h-64 border-4 border-gray-300 rounded-xl flex flex-col items-center justify-center space-y-4 bg-gray-50">
+        <div className="w-1/2 h-128 border-4 border-gray-300 rounded-xl flex flex-col items-center justify-center space-y-4 bg-gray-50">
           <input
             type="file"
             accept="image/*"
@@ -68,12 +68,12 @@ export default function Home() {
       {result && (
         <div className="flex justify-center items-start space-x-8 my-8">
           {/* Left: Annotated Image */}
-          <div className="w-1/2 h-64 border-4 border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
+          <div className="w-1/2 h-128 border-4 border-gray-300 rounded-xl flex items-center justify-center bg-gray-50">
             <img src={`data:image/jpeg;base64,${result.image_base64}`} alt="Detected" className="max-h-full max-w-full rounded-lg" />
           </div>
 
           {/* Right: Text Details */}
-          <div className="w-1/2 h-64 border-4 border-gray-300 rounded-xl p-4 bg-gray-50 overflow-auto">
+          <div className="w-1/2 h-128 border-4 border-gray-300 rounded-xl p-4 bg-gray-50 overflow-auto">
             {result.detections.map((d, i) => (
               <p key={i} className="text-gray-800">
                 {d.label} ({(d.confidence * 100).toFixed(1)}%) - [{d.bbox.map(v => v.toFixed(0)).join(", ")}]
