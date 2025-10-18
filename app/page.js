@@ -131,7 +131,15 @@ export default function Home() {
             ))}
           </div>
         </div>
+
       )}
+    <h2 className="text-2xl font-semibold text-white text-center my-6">
+    Model Statistics
+  </h2>
+    <img src="/confusion_matrix_normalized.png" alt="Confusion Matrix" className="mx-auto my-8 max-w-full rounded-lg" />
+    <img src="/BoxPR_curve.png" alt="Confusion Matrix" className="mx-auto my-8 max-w-full rounded-lg" />
+
+
     </main>
   );
 }
